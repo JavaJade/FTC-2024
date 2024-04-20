@@ -1,0 +1,56 @@
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
+import java.util.List;
+import com.qualcomm.robotcore.hardware.Servo.Direction
+
+
+@TeleOp(name = "blah (Blocks to Java)")
+public class blah extends OpMode {
+
+    DcMotor motorA;
+    DcMotor motorB;
+    DcMotor motorC;
+    List<DcMotor> motors;
+ 
+    @Override
+    public void init() {
+        telemetry.addData("Initialization:", "is a success");
+        telemetry.update();
+        motors = hardwareMap.getAll(DcMotor.class);
+         telemetry.addData("Hardware", motors.size());
+        for (DcMotor motor: motors){
+            telemetry.addData("Status", motor.getDeviceName());
+        }
+        motorA = hardwareMap.get(DcMotor.class, "MotorA");
+        motorB = hardwareMap.get(DcMotor.class, "MotorB");
+        motorC = hardwareMap.get(DcMotor.class, "MotorC");
+        motorA.setDirection(FORWARD);
+        motorB.setDirection(REVERSE);
+        motorC.setDirection(REVERSE);
+        telemetry.addData("Hardware", "Initialized");
+    }
+    
+    @Override
+    public void loop() {
+        telemetry.addData("Hardware", gamepad1.left_stick_y);
+	/*
+ * Programming controllers
+ */
+        motorA.setPower(gamepad1.left_stick_y);
+        motorB.setPower(gamepad1.right_stick_y);
+        if (gamepad1.dpad_up){
+            motorC.setPower(0.5);
+            
+        }
+        else if (gamepad1.dpad_down){
+            motorC.setPower(-0.5);
+            
+        } else {
+            motorC.setPower(0);
+        }
+    }
+}
