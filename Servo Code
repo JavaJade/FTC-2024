@@ -13,30 +13,33 @@ import com.qualcomm.robotcore.hardware.ServoImpl;
 import java.util.List;
 
 @TeleOp(name = "blah (Blocks to Java)")
-public class blah extends OpMode {
+public class Blah extends OpMode {
 
     DcMotor motorA;
     DcMotor motorB;
     DcMotor motorC;
-    ServoController servo1;
+    Servo servo1;
+    Servo servo2;
     List<DcMotor> motors;
- 
-/*
- * Run once
- */
+    double servo1Position = 0.0;
+    double servo2Position = 0.0;
+
+    /*
+     * Run once
+     */
     @Override
     public void init() {
-        
+
         telemetry.addData("Initialization:", "is a success");
         telemetry.update();
         motors = hardwareMap.getAll(DcMotor.class);
         telemetry.addData("Hardware", motors.size());
-        
+
         //Output motors
-        for (DcMotor motor: motors){
+        for (DcMotor motor : motors) {
             telemetry.addData("Status", motor.getDeviceName());
         }
-        
+
         //Motor setup
         motorA = hardwareMap.get(DcMotor.class, "MotorA");
         motorB = hardwareMap.get(DcMotor.class, "MotorB");
@@ -46,12 +49,15 @@ public class blah extends OpMode {
         motorC.setDirection(REVERSE);
         telemetry.addData("Hardware", "Initialized");
         //Servo setup
-        servo1 = hardwareMap.get(ServoController.class, "Servo1");
-        servo1.pwmEnable();
+        servo1 = hardwareMap.get(Servo.class, "Servo1");
+        servo2 = hardwareMap.get(Servo.class, "Servo2");
+//        servo1.pwmEnable();
+//        servo2.pwmEnable();
     }
-/*
- * loop code 
- */  
+
+    /*
+     * loop code
+     */
     @Override
     public void loop() {
         //makes the controller control the motors, probably
@@ -60,21 +66,29 @@ public class blah extends OpMode {
         motorB.setPower(gamepad1.left_stick_y);
         motorA.setPower(gamepad1.right_stick_y);
         //Arm
-        if (gamepad1.dpad_up){
+        if (gamepad1.dpad_up) {
             motorC.setPower(-0.5);
-            
-        }
-        else if (gamepad1.dpad_down){
+
+        } else if (gamepad1.dpad_down) {
             motorC.setPower(0.5);
-            
+
         } else {
             motorC.setPower(0);
         }
         //Servo 1
-        if (gamepad1.x) {
-            servo1.setPosition(0.0);
-        } else {
-            servo1.setPosition(1.0);
+        if (gamepad1.right_bumper) {
+            servo1Position = Math.min(1.0, servo1Position + 0.01);
+        } else if (gamePad1.right_triger) {
+            servo1Position = Math.max(0, servo1Position - 0.01);
         }
+        servo1.setPosition(servo1Position);
+
+        //Servo 2
+        if (gamepad2.left_bumper) {
+            servo2Position = Math.min(1.0, servo1Position + 0.01);
+        } else if (gamePad2.left_triger) {
+            servo2Position = Math.max(0, servo1Position - 0.01);
+        }
+        servo2.setPosition(servo2Position);
     }
 }
